@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def mask_account_card(account_string):
 
 
@@ -11,7 +13,14 @@ def mask_account_card(account_string):
 
 
 
-
+def get_date(iso_date_str):
+    """Преобразует дату из формата ISO8601 в формат 'DD.MM.YYYY'"""
+    # Отбрасываем лишнюю информацию после секунды (.671407)
+    cleaned_iso_date = iso_date_str.split('.')[0]
+    # Парсим строку в объект datetime
+    date_obj = datetime.strptime(cleaned_iso_date, "%Y-%m-%dT%H:%M:%S")
+    # Возвращаем строку с датой в нужном формате
+    return date_obj.strftime("%d.%m.%Y")
 
 
 
