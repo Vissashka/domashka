@@ -5,7 +5,9 @@ def get_mask_card_number(card_number: int) -> str:
     :param card_number: Целое число — номер карты
     :return: Строка с маской номера карты
     """
-    number_str = f"{card_number:016d}"  # Приводим к строке фиксированной длины 16 символов
+    number_str = (
+        f"{card_number:016d}"  # Приводим к строке фиксированной длины 16 символов
+    )
     return f"{number_str[:4]} {number_str[4:6]}** **** {number_str[-4:]}"
 
 

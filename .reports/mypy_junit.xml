@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuite errors="0" failures="1" name="mypy" skips="0" tests="1" time="1.993">
+  <testcase classname="mypy" file="mypy" line="1" name="mypy-py3_14-win32" time="1.993">
+    <failure message="mypy produced messages">src\widget.py:5:1: error: Cannot find implementation or library stub for module named "masks"  [import-not-found]
+    from masks import get_mask_account, get_mask_card_number
+    ^
+src\widget.py:5:1: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+tests\test_widget.py:5:1: error: Module "src.widget" has no attribute "mask_account"; maybe "get_mask_account" or "mask_account_card"?  [attr-defined]
+    from src.widget import get_date, mask_account
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests\test_widget.py: note: In member "test_mask_account" of class "WidgetTests":
+tests\test_widget.py:9:5: error: Function is missing a return type annotation  [no-untyped-def]
+        def test_mask_account(self):
+        ^
+tests\test_widget.py:9:5: note: Use "-&gt; None" if function does not return a value
+tests\test_widget.py: note: In member "test_get_date" of class "WidgetTests":
+tests\test_widget.py:27:5: error: Function is missing a return type annotation  [no-untyped-def]
+        def test_get_date(self):
+        ^
+tests\test_widget.py:27:5: note: Use "-&gt; None" if function does not return a value
+tests\test_widget.py:36:13: error: Module "src.widget" does not explicitly export attribute "get_mask_account"  [attr-defined]
+                from src.widget import get_date, get_mask_account
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</failure>
+  </testcase>
+</testsuite>

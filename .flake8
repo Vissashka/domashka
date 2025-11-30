@@ -1,3 +1,7 @@
 [flake8]
-max-line-length=119
-exclude=.git,__pycache__
+max-line-length = 88
+select = E,F,W,C90
+extend-ignore = E203,E501,E722,I,W503
+import-order-style = pep8
+application-import-names = src
+indent-size = 4

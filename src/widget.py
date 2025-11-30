@@ -1,33 +1,33 @@
 from datetime import datetime
-
-def mask_account_card(account_string):
-
-
-    if account_string.startswith("Счет"):  # обработка случая банковского счёта
-        _, account_number = account_string.split(maxsplit=1)
-        return f"Счет {'*'*(len(account_number)-4)}{account_number[-4:]}"
-    else:  # обработка всех остальных случаев (карты)
-        card_type, card_number = account_string.rsplit(maxsplit=1)
-        masked_number = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
-        return f"{card_type} {masked_number}"
+from typing import Tuple
+from src.masks import get_mask_card_number, get_mask_account
 
 
+def mask_account_card(data: str) -> str:
 
-def get_date(iso_date_str):
-    """Преобразует дату из формата ISO8601 в формат 'DD.MM.YYYY'"""
-    # Отбрасываем лишнюю информацию после секунды (.671407)
-    cleaned_iso_date = iso_date_str.split('.')[0]
-    # Парсим строку в объект datetime
-    date_obj = datetime.strptime(cleaned_iso_date, "%Y-%m-%dT%H:%M:%S")
-    # Возвращаем строку с датой в нужном формате
-    return date_obj.strftime("%d.%m.%Y")
+    # Делим строку по последнему пробелу
+    parts = data.rsplit(maxsplit=1)
+
+    # Проверяем, чтобы в результате получилось ровно два элемента
+    if len(parts) != 2:
+        raise ValueError("Некорректный ввод")
+
+    name_part, number_part = parts
+
+    # Проверяем корректность номера
+    if not number_part.isdigit():
+        raise ValueError("Некорректный номер карты/счета")
+
+    # Определяем, какой тип операции выполняем (маскировка карты или счета)
+    if name_part.lower().startswith("счет"):
+        masked_value = get_mask_account(int(number_part))
+    else:
+        masked_value = get_mask_card_number(int(number_part))
+
+    return f"{name_part} {masked_value}"
+
+def get_date(date_string: str) -> str:
 
 
-
-
-
-
-
-
-
-
+    dt = datetime.fromisoformat(date_string)
+    return dt.strftime("%d.%m.%Y")
