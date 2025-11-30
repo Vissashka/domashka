@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple
+
 from src.masks import get_mask_card_number, get_mask_account
 
 
@@ -26,8 +26,8 @@ def mask_account_card(data: str) -> str:
 
     return f"{name_part} {masked_value}"
 
-def get_date(date_string: str) -> str:
 
+def get_date(date_string: str) -> str:
 
     dt = datetime.fromisoformat(date_string)
     return dt.strftime("%d.%m.%Y")
