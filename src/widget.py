@@ -4,6 +4,7 @@ from src.masks import get_mask_card_number, get_mask_account
 
 
 def mask_account_card(data: str) -> str:
+    """Маска для аккаунта или карты."""
 
     # Делим строку по последнему пробелу
     parts = data.rsplit(maxsplit=1)
@@ -26,8 +27,9 @@ def mask_account_card(data: str) -> str:
 
     return f"{name_part} {masked_value}"
 
-def get_date(date_string: str) -> str:
 
+def get_date(date_string: str) -> str:
+    """Преобразует дату из ISO формата в формат ДД.ММ.ГГГГ"""
 
     dt = datetime.fromisoformat(date_string)
     return dt.strftime("%d.%m.%Y")

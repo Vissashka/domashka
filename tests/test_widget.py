@@ -1,47 +1,34 @@
-# tests/test_widget.py
-
-from unittest import TestCase
-
-from src.widget import get_date, mask_account
+import unittest
+from src.widget import mask_account_card, get_date
 
 
-class WidgetTests(TestCase):
-    def test_mask_account(self):
-        self.assertEqual(
-            mask_account("Visa Platinum 7000792289606361"),
-            "Visa Platinum 7000 79** **** 6361",
-        )
-        self.assertEqual(
-            mask_account("Счет 73654108430135874305"),
-            "Счет **4305",
-        )
+class TestWidgetFunctions(unittest.TestCase):
 
-        # Тестируем недопустимую строку
+    def test_mask_account_card(self):
+        # Тестируем обработку номеров карт
+        self.assertEqual(mask_account_card('Visa Platinum 7000792289606361'), 'Visa Platinum 7000 79** **** 6361')
+        self.assertEqual(mask_account_card('Maestro 1596837868705199'), 'Maestro 1596 83** **** 5199')
+
+        # Тестируем обработку счетов
+        self.assertEqual(mask_account_card('Счет 73654108430135874305'), 'Счет **4305')
+        self.assertEqual(mask_account_card('Счет 64686473678894779589'), 'Счет **9589')
+
+        # Неправильный ввод должен вызывать исключение
         with self.assertRaises(ValueError):
-            mask_account("")
+            mask_account_card('Неправильная_строка')  # Некорректный формат строки
 
-        # Тестируем недействительную карточку
         with self.assertRaises(ValueError):
-            mask_account("OnlyCard")
+            mask_account_card('Счет abcde')  # Нецифровой номер счета
 
     def test_get_date(self):
-        self.assertEqual(get_date("2023-10-26T12:34:56Z"), "26.10.2023")
-        self.assertEqual(get_date("2025-01-01T00:00:00Z"), "01.01.2025")
+        # Проверяем преобразование даты
+        self.assertEqual(get_date('2024-03-11T02:26:18.671407'), '11.03.2024')
+        self.assertEqual(get_date('2025-07-23T14:30:00'), '23.07.2025')
 
-        # Тестируем недопустимую дату
+        # Проверьте поведение с некорректной датой
         with self.assertRaises(ValueError):
-            get_date("InvalidDateFormat")
+            get_date('incorrect_format')
 
-            import unittest
-            from src.widget import get_date, get_mask_account
 
-            class WidgetTests(unittest.TestCase):
-                def test_mask_account(self) -> None:
-                    masked = get_mask_account('some_data')
-                    self.assertTrue(masked.startswith('*'))
-
-                def test_get_date(self) -> None:
-                    iso_date = "2023-10-15"
-                    result = get_date(iso_date)
-                    self.assertIsInstance(result, str)
-
+if __name__ == '__main__':
+    unittest.main()
