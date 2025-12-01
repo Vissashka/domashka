@@ -33,6 +33,7 @@ class WidgetTests(TestCase):
             get_date("InvalidDateFormat")
 
             import unittest
+
             from src.widget import get_date, get_mask_account
 
             class WidgetTests(unittest.TestCase):
