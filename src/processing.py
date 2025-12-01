@@ -1,9 +1,7 @@
-python
-Копировать
 from typing import Dict, List
 
 
-def filter_by_state(transactions: List[Dict], state: str = 'EXECUTED') -> List[Dict]:
+def filter_by_state(transactions: List[Dict], state: str = "EXECUTED") -> List[Dict]:
     """
     Фильтрует список транзакций по указанному статусу состояния ('state').
 
@@ -17,8 +15,7 @@ def filter_by_state(transactions: List[Dict], state: str = 'EXECUTED') -> List[D
       List[Dict]: Новый список транзакций, содержащий только те записи, чей статус совпадает с указанным значением.
     """
     filtered_transactions = [
-        transaction for transaction in transactions
-        if transaction.get('state') == state
+        transaction for transaction in transactions if transaction.get("state") == state
     ]
     return filtered_transactions
 
@@ -41,7 +38,7 @@ def sort_by_date(transactions: List[Dict], reverse: bool = True) -> List[Dict]:
     """
     sorted_transactions = sorted(
         transactions,
-        key=lambda x: x['date'],  # Использует поле 'date' для сравнения элементов
-        reverse=reverse          # Направление сортировки
+        key=lambda x: x["date"],  # Использует поле 'date' для сравнения элементов
+        reverse=reverse,  # Направление сортировки
     )
     return sorted_transactions
