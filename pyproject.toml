@@ -17,3 +17,23 @@ authors = ["Your Name"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.1,<10.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+

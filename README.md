@@ -53,3 +53,18 @@ pythonfrom src.processing import filter_by_state, sort_by_date
 Фильтруем транзакции по состоянию исполненные_транзакции = фильтр_по_состоянию(транзакции)печать(выполненные_транзакции)
 
 Сортируемые транзакции по дате sorted_transactions = sort_by_date(transactions)print(sorted_transactions)
+
+## Тестирование
+
+Проект покрыт тестами с использованием библиотеки `pytest`.
+Тесты находятся в директории `tests/`.
+
+Для запуска тестов выполните:
+
+* pytest
+
+Для проверки покрытия кода тестами:
+
+* pytest --cov=src --cov-report=html
+
+

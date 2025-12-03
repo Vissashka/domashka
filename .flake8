@@ -5,3 +5,16 @@ extend-ignore = E203,E501,E722,I,W503
 import-order-style = pep8
 application-import-names = src
 indent-size = 4
+
+[flake8]
+max-line-length = 88
+extend-ignore = E203,E266,W503,F403,F405
+select = B,C,E,F,W,T4,B9
+exclude =
+    .venv,
+    __pycache__,
+    migrations,
+    node_modules,
+    tests,
+    *.min.js,
+    vendor
