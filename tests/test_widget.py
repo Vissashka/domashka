@@ -23,8 +23,6 @@ def test_mask_account_card_negative(input_data):
     В текущей реализации widget.py проверяется только .isdigit().
     Ниже тесты на реальные ошибки.
     """
-    pass
-
 
 def test_mask_account_card_errors():
     """Тестирует выброс ошибок при некорректных данных."""
@@ -44,4 +42,5 @@ def test_mask_account_card_errors():
 def test_get_date(date_str, expected):
     """Тестирует преобразование даты."""
     assert get_date(date_str) == expected
+
 
