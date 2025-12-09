@@ -1,40 +1,41 @@
-from typing import Generator, Optional, Union
 from itertools import count
+from typing import Generator, Optional
 
 
 def filter_by_currency(transactions: list, currency_code: str) -> Generator:
-    """
-    Фильтрация транзакций по заданной валюте.
 
-    :param transactions: Список транзакций, представленных словарями.
-    :param currency_code: Валюта для фильтрации.
-    :return: Итератор, содержащий подходящие транзакции.
     """
-    for tx in transactions:
-        try:
-            amount_data = tx.get("operationAmount") or {}
-            currency_data = amount_data.get("currency") or {}
+    Генерирует транзакции заданной валюты.
 
-            if currency_data.get("code") == currency_code:
-                yield tx
-        except Exception as e:
-            pass  # Или можно записать ошибку куда-то дополнительно
+    Parameters:
+        transactions (list): Список транзакций, каждая из которых представлена словарем.
+                            Каждая транзакция включает вложенное поле operationAmount.currency.code,
+                            которое хранит валюту операции.
+        currency_code (str): Код валюты, по которой фильтруются транзакции.
+
+    Yields:
+        dict: Транзакции, соответствующие указанной валюте.
+    """
+    yield from (tx for tx in transactions if tx['operationAmount']['currency']['code'] == currency_code)
 
 
 def transaction_descriptions(transactions: list) -> Generator[str, None, None]:
     """
-    Получение описаний транзакций.
+    Генерирует описания транзакций.
 
-    :param transactions: Список транзакций.
-    :return: Итератор строковых описаний транзакций.
+    Parameters:
+        transactions (list): Список транзакций, каждая из которых представлена словарем.
+                            Поле description содержит описание операции.
+
+    Yields:
+        str: Описание очередной транзакции.
     """
-    for tx in transactions:
-        try:
-            yield tx["description"]
-        except KeyError:
-            continue  # Пропускаем транзакции без описания
+
+    yield from (tx['description'] for tx in transactions)
+
 
 def card_number_generator(start: int = 1, stop: Optional[int] = None) -> Generator[str, None, None]:
+
     """
     Генерирует номера банковских карт в указанном диапазоне.
 
@@ -50,4 +51,3 @@ def card_number_generator(start: int = 1, stop: Optional[int] = None) -> Generat
             break
         formatted_num = f'{i:016}'
         yield f'{formatted_num[:4]} {formatted_num[4:8]} {formatted_num[8:12]} {formatted_num[12:]}'
-
