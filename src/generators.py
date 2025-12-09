@@ -50,3 +50,4 @@ def card_number_generator(start: int = 1, stop: Optional[int] = None) -> Generat
             break
         formatted_num = f'{i:016}'
         yield f'{formatted_num[:4]} {formatted_num[4:8]} {formatted_num[8:12]} {formatted_num[12:]}'
+
