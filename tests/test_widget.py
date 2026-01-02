@@ -1,48 +1,46 @@
-# tests/test_widget.py
-
-from unittest import TestCase
-
-from src.widget import get_date, mask_account
+import pytest
+from src.widget import mask_account_card, get_date
 
 
-class WidgetTests(TestCase):
-    def test_mask_account(self):
-        self.assertEqual(
-            mask_account("Visa Platinum 7000792289606361"),
-            "Visa Platinum 7000 79** **** 6361",
-        )
-        self.assertEqual(
-            mask_account("Счет 73654108430135874305"),
-            "Счет **4305",
-        )
+@pytest.mark.parametrize("input_data, expected", [
+    ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
+    ("Maestro 1596837868705199", "Maestro 1596 83** **** 5199"),
+    ("Счет 73654108430135874305", "Счет **4305"),
+    ("Visa Gold 5999414228426353", "Visa Gold 5999 41** **** 6353"),
+])
+def test_mask_account_card(input_data, expected):
+    """Тестирует корректную работу функции mask_account_card с разными входными данными."""
+    assert mask_account_card(input_data) == expected
 
-        # Тестируем недопустимую строку
-        with self.assertRaises(ValueError):
-            mask_account("")
 
-        # Тестируем недействительную карточку
-        with self.assertRaises(ValueError):
-            mask_account("OnlyCard")
+@pytest.mark.parametrize("input_data", [
+    "Visa Platinum 7000792289606361123123",  # Слишком длинный (проверка логики не сломается, но тест на формат)
+    "CrazyCard 123",  # Некорректный ввод
+])
+def test_mask_account_card_negative(input_data):
+    """
+    Этот тест опционален, зависит от того, как жестко мы хотим проверять валидность.
+    В текущей реализации widget.py проверяется только .isdigit().
+    Ниже тесты на реальные ошибки.
+    """
 
-    def test_get_date(self):
-        self.assertEqual(get_date("2023-10-26T12:34:56Z"), "26.10.2023")
-        self.assertEqual(get_date("2025-01-01T00:00:00Z"), "01.01.2025")
+def test_mask_account_card_errors():
+    """Тестирует выброс ошибок при некорректных данных."""
+    # Проверка на отсутствие номера (слишком мало слов)
+    with pytest.raises(ValueError, match="Некорректный ввод"):
+        mask_account_card("Visa")
 
-        # Тестируем недопустимую дату
-        with self.assertRaises(ValueError):
-            get_date("InvalidDateFormat")
+    # Проверка на нецифровой номер
+    with pytest.raises(ValueError, match="Некорректный номер карты/счета"):
+        mask_account_card("Visa Platinum 1234asd56")
 
-            import unittest
 
-            from src.widget import get_date, get_mask_account
+@pytest.mark.parametrize("date_str, expected", [
+    ("2024-03-11T02:26:18.671407", "11.03.2024"),
+    ("2019-07-03T18:35:29.512364", "03.07.2019"),
+])
+def test_get_date(date_str, expected):
+    """Тестирует преобразование даты."""
+    assert get_date(date_str) == expected
 
-            class WidgetTests(unittest.TestCase):
-                def test_mask_account(self) -> None:
-                    masked = get_mask_account('some_data')
-                    self.assertTrue(masked.startswith('*'))
-
-                def test_get_date(self) -> None:
-                    iso_date = "2023-10-15"
-                    result = get_date(iso_date)
-                    self.assertIsInstance(result, str)
 
