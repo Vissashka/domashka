@@ -25,3 +25,37 @@ def load_json(file_path: str) -> List[Dict]:
     except Exception as e:
         print(f"Произошла ошибка: {e}")
         return []
+
+import logging
+from pathlib import Path
+
+# Вычисляем путь к папке logs относительно местоположения этого файла
+LOG_DIR = Path(__file__).parent.parent / "logs"
+
+# Путь к файлу лога для утилит
+UTILS_LOG_FILE = LOG_DIR / "utils.log"
+
+# Получаем логгер для конкретного модуля
+logger_utils = logging.getLogger('utils')
+
+# Устанавливаем минимальный уровень логирования
+logger_utils.setLevel(logging.DEBUG)
+
+# Создаём формат вывода логов
+formatter = logging.Formatter('%(asctime)s | %(levelname)-8s | %(module)-10s | %(message)s')
+
+# Настраиваем хендлер для записи в файл
+file_handler = logging.FileHandler(UTILS_LOG_FILE)
+file_handler.setFormatter(formatter)
+
+# Присоединяем хендлер к логгеру
+logger_utils.addHandler(file_handler)
+
+# Очищаем файл лога при каждом запуске
+# if UTILS_LOG_FILE.exists():
+  #  with open(UTILS_LOG_FILE, 'w'):
+      #  pass
+
+
+
+
