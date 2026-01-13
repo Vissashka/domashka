@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def transaction_list():
     """Фикстура возвращает список транзакций для тестов."""

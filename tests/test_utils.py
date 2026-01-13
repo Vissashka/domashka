@@ -1,6 +1,7 @@
-from unittest.mock import patch, MagicMock
-from src.utils import load_json
+from unittest.mock import MagicMock, patch
+
 from src.external_api import convert_currency
+from src.utils import load_json
 
 
 @patch('builtins.open', new_callable=MagicMock)

@@ -1,6 +1,7 @@
 import time
 from functools import wraps
-from typing import Optional, Callable, Any
+from typing import Any, Callable, Optional
+
 
 def log(filename: Optional[str] = None):
     """

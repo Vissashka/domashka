@@ -1,5 +1,8 @@
 import pytest
-from decorators import log  # Импортируем наш созданный декоратор из модуля decorators.py
+
+from decorators import (
+    log,  # Импортируем наш созданный декоратор из модуля decorators.py
+)
 
 
 # Тестируем успешное выполнение функции

@@ -46,8 +46,3 @@ file_handler.setFormatter(formatter)
 
 # Присоединяем хендлер к логгеру
 logger_masks.addHandler(file_handler)
-
-# Очищаем файл лога при каждом запуске
-#if MASK_LOG_FILE.exists():
-   # with open(MASK_LOG_FILE, 'w'):
-       #pass
