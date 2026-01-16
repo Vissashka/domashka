@@ -1,5 +1,7 @@
 import json
-from typing import Dict, List, Union
+from pathlib import Path
+import logging
+from typing import List, Dict
 
 
 def load_json(file_path: str) -> List[Dict]:
@@ -22,12 +24,13 @@ def load_json(file_path: str) -> List[Dict]:
     except FileNotFoundError:
         print("Ошибка: Файл не найден.")
         return []
+    except PermissionError:
+        print("Ошибка: Нет доступа к файлу.")
+        return []
     except Exception as e:
         print(f"Произошла ошибка: {e}")
         return []
 
-import logging
-from pathlib import Path
 
 # Вычисляем путь к папке logs относительно местоположения этого файла
 LOG_DIR = Path(__file__).parent.parent / "logs"
@@ -51,10 +54,7 @@ file_handler.setFormatter(formatter)
 # Присоединяем хендлер к логгеру
 logger_utils.addHandler(file_handler)
 
-# Очищаем файл лога при каждом запуске
-# if UTILS_LOG_FILE.exists():
-  #  with open(UTILS_LOG_FILE, 'w'):
-      #  pass
+
 
 
 

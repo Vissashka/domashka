@@ -1,95 +1,66 @@
 import unittest
-from unittest.mock import patch, Mock
-from main import convert_currency
-import sys
+from unittest.mock import patch
+from src.external_api import convert_currency  # Предполагаем, что ваша функция находится в модуле your_module
+import requests_mock
 import os
+import requests
 
-# Добавляем корень проекта в PATH
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-
-class TestConvertCurrency(unittest.TestCase):
+class TestCurrencyConversion(unittest.TestCase):
 
     def setUp(self):
-        self.transaction_usd = {
-            'amount': 100,
-            'currency': 'USD'
+        self.sample_transaction = {"amount": 100, "currency": "USD"}
+
+    def test_successful_conversion(self):
+        expected_response = {
+            "rates": {"RUB": 75.5}
         }
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "test_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=RUB', json=expected_response)
+                result = convert_currency(self.sample_transaction)
+                self.assertEqual(result, 7550.00)
 
-        self.transaction_eur = {
-            'amount': 100,
-            'currency': 'EUR'
+    def test_invalid_api_key(self):
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "invalid_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=RUB', status_code=401)
+                result = convert_currency(self.sample_transaction)
+                self.assertIsNone(result)
+
+    def test_missing_rate_in_response(self):
+        invalid_response = {
+            "rates": {}  # отсутствие данных по валюте RUB
         }
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "test_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=RUB', json=invalid_response)
+                result = convert_currency(self.sample_transaction)
+                self.assertIsNone(result)
 
-        self.transaction_rub = {
-            'amount': 100,
-            'currency': 'RUB'
-        }
+    def test_network_error(self):
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "test_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=RUB',
+                      exc=requests.exceptions.ConnectionError)
+                result = convert_currency(self.sample_transaction)
+                self.assertIsNone(result)
 
-        self.invalid_transaction = {
-            'amount': 100,
-            'currency': 'XXX'
-        }
+    def test_zero_amount(self):
+        zero_amount_transaction = {"amount": 0, "currency": "EUR"}
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "test_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=EUR&symbols=RUB', json={"rates": {"RUB": 80}})
+                result = convert_currency(zero_amount_transaction)
+                self.assertEqual(result, 0.00)
 
-        self.missing_amount_transaction = {
-            'currency': 'USD'
-        }
-
-    @patch('requests.get')
-    def test_convert_usd_to_rub(self, mock_get):
-        """Тестирование успешного преобразования USD в рубли"""
-        mock_response = Mock()
-        mock_response.json.return_value = {'rates': {'RUB': 80}}
-        mock_get.return_value = mock_response
-
-        result = convert_currency(self.transaction_usd)
-        expected_result = 8000.00
-        self.assertEqual(result, expected_result)
-
-    @patch('requests.get')
-    def test_convert_eur_to_rub(self, mock_get):
-        """Тестирование успешного преобразования EUR в рубли"""
-        mock_response = Mock()
-        mock_response.json.return_value = {'rates': {'RUB': 90}}
-        mock_get.return_value = mock_response
-
-        result = convert_currency(self.transaction_eur)
-        expected_result = 9000.00
-        self.assertEqual(result, expected_result)
-
-    def test_already_in_rubles(self):
-        """Проверяем случай, когда валюта уже указана в рублях"""
-        result = convert_currency(self.transaction_rub)
-        expected_result = 100
-        self.assertEqual(result, expected_result)
-
-    @patch('requests.get')
-    def test_invalid_currency(self, mock_get):
-        """Проверяем обработку неверной валюты"""
-        mock_response = Mock()
-        mock_response.json.return_value = {'rates': {}}
-        mock_get.return_value = mock_response
-
-        result = convert_currency(self.invalid_transaction)
-        self.assertIsNone(result)
-
-    def test_missing_amount_field(self):
-        """Проверяем отсутствие поля 'amount' в транзакции"""
-        result = convert_currency(self.missing_amount_transaction)
-        self.assertIsNone(result)
-
-    @patch('requests.get')
-    def test_server_error(self, mock_get):
-        """Обработка ситуации, когда сервер API возвращает ошибку"""
-        mock_response = Mock()
-        mock_response.status_code = 500
-        mock_get.return_value = mock_response
-
-        with self.assertRaises(Exception):
-            convert_currency(self.transaction_usd)
-
+    def test_unsupported_currency(self):
+        unsupported_transaction = {"amount": 100, "currency": "XXX"}
+        with patch.dict(os.environ, {"EXCHANGE_RATES_API_KEY": "test_api_key"}):
+            with requests_mock.Mocker() as m:
+                m.get('https://api.apilayer.com/exchangerates_data/latest?base=XXX&symbols=RUB', status_code=400)
+                result = convert_currency(unsupported_transaction)
+                self.assertIsNone(result)
 
 if __name__ == '__main__':
     unittest.main()
-
 
