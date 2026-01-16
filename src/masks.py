@@ -20,3 +20,29 @@ def get_mask_account(account_number: int) -> str:
     """
     number_str = f"{account_number:d}"  # Преобразуем целое число в строку
     return f"**{number_str[-4:]}"
+
+
+import logging
+from pathlib import Path
+
+# Вычисляем путь к папке logs относительно местоположения этого файла
+LOG_DIR = Path(__file__).parent.parent / "logs"
+
+# Путь к файлу лога для масок
+MASK_LOG_FILE = LOG_DIR / "masks.log"
+
+# Получаем логгер для конкретного модуля
+logger_masks = logging.getLogger('masks')
+
+# Установим минимальный уровень логирования
+logger_masks.setLevel(logging.DEBUG)
+
+# Создаём формат вывода логов
+formatter = logging.Formatter('%(asctime)s | %(levelname)-8s | %(module)-10s | %(message)s')
+
+# Настраиваем хендлер для записи в файл
+file_handler = logging.FileHandler(MASK_LOG_FILE)
+file_handler.setFormatter(formatter)
+
+# Присоединяем хендлер к логгеру
+logger_masks.addHandler(file_handler)

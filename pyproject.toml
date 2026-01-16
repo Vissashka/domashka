@@ -2,7 +2,7 @@
 profile = "black"
 
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.9"
 strict_optional = true
 check_untyped_defs = true
 disallow_incomplete_defs = true
@@ -17,3 +17,29 @@ authors = ["Your Name"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pandas = "^2.3.3"
+openpyxl = "^3.1.5"
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.1,<10.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)"
+]
+
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
+
+[tool.pytest.ini_options]
+addopts = "-vv --cov-report term-missing --cov=."
+
+
+
+
