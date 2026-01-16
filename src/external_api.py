@@ -10,28 +10,21 @@ BASE_URL = 'https://api.apilayer.com/exchangerates_data/latest'
 HEADERS = {'apikey': API_KEY}
 
 
-def convert_currency(transaction: Dict[str, any]) -> Optional[float]:
-    """
-    Преобразует сумму транзакции в рубли, обращаясь к API
-    обменных курсов при необходимости.
+def convert_currency(transaction: Dict[str, Any]):
+    # ...
+    response = requests.get(BASE_URL, headers=HEADERS, params={"base": currency, "symbols": "RUB"})
 
-    :param transaction: Словарь с информацией о транзакции
-    :return: Сумма транзакции в рублях (если доступна валюта),
-             None в противном случае
-    """
-    amount = transaction.get('amount')
-    currency = transaction.get('currency')
+    if response.status_code == 200:
+        data = response.json()
 
-    # Валюта уже в рублях, ничего не делаем
-    if currency == 'RUB':
-        return amount
-
-    response = requests.get(BASE_URL, headers=HEADERS, params={'symbols': 'RUB'})
-    rates = response.json().get('rates', {})
-
-    if 'RUB' in rates:
-        rub_rate = rates['RUB']
-        converted_amount = round(amount * rub_rate, 2)
-        return converted_amount
+        # Логика для проверки наличия необходимой информации
+        if "rates" in data and "RUB" in data["rates"]:
+            rate = data["rates"]["RUB"]
+            return round(amount * rate, 2)
+        else:
+            print("Ошибка: Не найдены данные по курсу.", data)
+            return None
     else:
+        print(f"Ошибка запроса к API ({response.status_code}). Ответ:", response.text)
         return None
+
